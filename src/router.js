@@ -1,5 +1,5 @@
 import {createRouter, createWebHistory} from "vue-router";
-
+import {useAuthStore} from "@/auth.js";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -22,9 +22,18 @@ const router = createRouter({
         {
             path: "/main",
             name: "main",
-            component: () => import("./components/Main.vue")
+            component: () => import("./components/main/Main.vue"),
+            meta: {requiresAuth: true}
         }
     ]
+})
+
+router.beforeEach((to, from) => {
+    if (to.meta.requiresAuth && !useAuthStore().isAuthenticated) {
+        return {name: "login"};
+    } else {
+        return true;
+    }
 })
 
 export default router;

@@ -1,6 +1,7 @@
 <script setup>
   import axios from 'axios';
   import {useRoute} from "vue-router";
+  axios.defaults.withCredentials = true;
   axios.defaults.withXSRFToken = true;
   axios.defaults.xsrfCookieName = 'XSRF-TOKEN';
   axios.defaults.xsrfHeaderName = 'X-XSRF-TOKEN';
