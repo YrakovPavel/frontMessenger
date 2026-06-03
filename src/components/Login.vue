@@ -2,7 +2,7 @@
 
 import {ref} from "vue";
 import axios from "axios";
-import {useAuthStore} from "@/auth.js";
+import {useAuthStore} from "@/stores/useAuthStore.js";
 import {useRouter} from "vue-router";
 
 const user = ref({

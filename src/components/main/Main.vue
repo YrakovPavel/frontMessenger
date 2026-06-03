@@ -1,16 +1,35 @@
 <script setup>
   import AddChat from "@/components/main/AddChat.vue";
+  import axios from "axios";
+  import {onMounted, ref} from "vue";
+
+  let chats = ref([]);
+  async function getChats(){
+    axios.get('/chats/preview')
+        .then(response =>{
+          chats.value = response.data;
+          console.log(chats.value);
+        })
+        .catch(error =>{
+          console.log(error)
+        })
+  }
+
+  onMounted(()=>{
+    getChats();
+  })
+
 </script>
 
 <template>
   <div class="page">
     <div class="container">
       <div class="list-group">
-        <a href="#" class="friend list-group-item list-group-item-action" v-for="n in 10">
-          <img class="friend-avatar" src="../../assets/avatar-generations_rpge.jpg" alt="avatar">
-            <h6 class="friend-name">Пользователь {{n}}</h6>
+        <a href="#" class="friend list-group-item list-group-item-action" v-for="chat in chats">
+          <img class="friend-avatar" :src="chat.avatarUrl" alt="avatar">
+            <h6 class="friend-name">{{chat.name}}</h6>
             <small class="friend-time">3 days ago</small>
-            <p class="friend-message">Сообщение Сообщение Сообщение</p>
+            <p class="friend-message">{{chat.text}}</p>
             <span class="friend-badge badge text-bg-primary rounded-pill">2</span>
         </a>
       </div>

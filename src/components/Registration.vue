@@ -2,6 +2,7 @@
   import {ref} from "vue";
   import axios from "axios";
   import {useRouter} from "vue-router";
+  import {useAuthStore} from "@/stores/useAuthStore.js";
 
   const router = useRouter();
 
@@ -29,6 +30,7 @@
         .then(response =>{
           axios.post('/api/public/registration', user.value)
           .then(response =>{
+            useAuthStore().isAuthenticated = true;
             router.push({name: "main"});
           })
           .catch(error =>{
