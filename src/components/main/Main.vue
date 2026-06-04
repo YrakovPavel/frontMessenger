@@ -2,18 +2,54 @@
   import AddChat from "@/components/main/AddChat.vue";
   import axios from "axios";
   import {onMounted, ref} from "vue";
+  import ChatSender from "@/components/main/ChatSender.vue";
+  import ChatRecipient from "@/components/main/ChatRecipient.vue";
 
-  let chats = ref([]);
+  const chats = ref([]);
   async function getChats(){
     axios.get('/chats/preview')
         .then(response =>{
           chats.value = response.data;
-          console.log(chats.value);
         })
         .catch(error =>{
-          console.log(error)
+          console.log(error);
         })
   }
+
+  const message = ref({
+    chat_id: null,
+    text: null
+  })
+
+  async function sendMessage(){
+      axios.post('/api/message/send', message.value)
+          .then(response =>{
+          })
+          .catch(error =>{
+            console.log(error);
+          })
+  }
+
+  const mes1 = ref({
+    author: "Вы",
+    message: "Сообщение",
+    time: "3 дня назад"
+  });
+
+  const chatContent = ref([]);
+  function getChatContent(chat_id){
+    message.value.chat_id = chat_id;
+  }
+  /*
+  async function getChatContent(){
+    axios.get('/chat/content')
+        .then(response =>{
+          chatContent.value = response.data;
+        })
+        .catch(error =>{
+          console.log(error);
+        })
+  } */
 
   onMounted(()=>{
     getChats();
@@ -25,7 +61,8 @@
   <div class="page">
     <div class="container">
       <div class="list-group">
-        <a href="#" class="friend list-group-item list-group-item-action" v-for="chat in chats">
+        <a href="#" class="friend list-group-item list-group-item-action"
+           v-for="chat in chats" @click="getChatContent(chat.chat_id)">
           <img class="friend-avatar" :src="chat.avatarUrl" alt="avatar">
             <h6 class="friend-name">{{chat.name}}</h6>
             <small class="friend-time">3 days ago</small>
@@ -34,27 +71,12 @@
         </a>
       </div>
       <div class="chat">
-        <div class="chat_sender">
-          <h6 class="mb-1">Пользователь</h6>
-          <label>Сообщение сообщение сообщение</label>
-          <br>
-          <small>3 days ago</small>
-        </div>
-        <div class="chat_sender">
-          <label>Сообщение сообщение сообщение</label>
-        </div>
-        <div class="chat_recipient">
-          <h6 class="mb-1">Вы</h6>
-          <label>Сообщение сообщение сообщение</label>
-          <br>
-          <small>2 days ago</small>
-        </div>
-        <div class="chat_sender">
-          <label>Сообщение сообщение сообщение</label>
-        </div>
+        <ChatRecipient :message="mes1"></ChatRecipient>
       </div>
       <div class="form-floating">
-        <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+        <textarea class="form-control" placeholder="Leave a comment here"
+                  id="floatingTextarea2" style="height: 100px"
+                  v-model="message.text" @keydown.enter="sendMessage"></textarea>
         <label for="floatingTextarea2">Comment</label>
       </div>
       <add-chat></add-chat>
@@ -95,29 +117,6 @@
     padding: 60px;
     height: 60vh;
     overflow-y: auto;
-  }
-
-  .chat_sender{
-    background: lightgrey;
-    align-self: flex-start;
-    text-align: left;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    padding: 10px;
-    max-width: 50%;
-    word-break: break-all;
-  }
-
-  .chat_recipient{
-    background: dodgerblue;
-    align-self: flex-end;
-    text-align: left;
-    color: white;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    padding: 10px;
-    max-width: 50%;
-    word-break: break-all;
   }
 
   .friend{
