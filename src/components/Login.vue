@@ -20,6 +20,7 @@ async function login(){
   axios.post('/api/login', params)
       .then(response =>{
         useAuthStore().isAuthenticated = true;
+        useAuthStore().username = params.get("username");
         router.push({name: "main"});
       })
       .catch(error =>{

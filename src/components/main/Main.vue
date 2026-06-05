@@ -1,9 +1,10 @@
 <script setup>
   import AddChat from "@/components/main/AddChat.vue";
   import axios from "axios";
-  import {onMounted, ref} from "vue";
+  import {onMounted, reactive, ref, shallowRef} from "vue";
   import ChatSender from "@/components/main/ChatSender.vue";
   import ChatRecipient from "@/components/main/ChatRecipient.vue";
+  import {useAuthStore} from "@/stores/useAuthStore.js";
 
   const chats = ref([]);
   async function getChats(){
@@ -16,40 +17,50 @@
         })
   }
 
-  const message = ref({
+  const messageToSend = ref({
     chat_id: null,
     text: null
   })
 
   async function sendMessage(){
-      axios.post('/api/message/send', message.value)
+      axios.post('/api/message/send', messageToSend.value)
           .then(response =>{
+            messageToSend.value.text = null;
+            getChatContent(messageToSend.value.chat_id);
           })
           .catch(error =>{
             console.log(error);
           })
   }
 
-  const mes1 = ref({
-    author: "Вы",
-    message: "Сообщение",
-    time: "3 дня назад"
-  });
-
   const chatContent = ref([]);
-  function getChatContent(chat_id){
-    message.value.chat_id = chat_id;
-  }
-  /*
-  async function getChatContent(){
-    axios.get('/chat/content')
+  const chatComponents = shallowRef([]);
+
+  async function getChatContent(chat_id){
+    messageToSend.value.chat_id = chat_id;
+    axios.get(`/chats/${chat_id}`)
         .then(response =>{
+          chatComponents.value = [];
           chatContent.value = response.data;
+          chatContent.value.forEach((message) =>{
+            if (message["username"] === useAuthStore().username){
+              chatComponents.value.push({
+                type: ChatRecipient,
+                props: {message}
+              })
+            }
+            else{
+              chatComponents.value.push({
+                type: ChatSender,
+                props: {message}
+              })
+            }
+          })
         })
         .catch(error =>{
           console.log(error);
         })
-  } */
+  }
 
   onMounted(()=>{
     getChats();
@@ -71,12 +82,12 @@
         </a>
       </div>
       <div class="chat">
-        <ChatRecipient :message="mes1"></ChatRecipient>
+        <component v-for="item in chatComponents" :is="item.type" v-bind="item.props"/>
       </div>
       <div class="form-floating">
         <textarea class="form-control" placeholder="Leave a comment here"
                   id="floatingTextarea2" style="height: 100px"
-                  v-model="message.text" @keydown.enter="sendMessage"></textarea>
+                  v-model="messageToSend.text" @keydown.enter="sendMessage"></textarea>
         <label for="floatingTextarea2">Comment</label>
       </div>
       <add-chat></add-chat>
@@ -124,7 +135,7 @@
     display: grid;
     grid-auto-columns: 2fr 1fr 5fr 2fr;
     grid-template-areas:
-        "a b d d e e"
+        "a b b d e e"
         "a c c c c m";
   }
 

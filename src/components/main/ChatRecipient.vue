@@ -4,8 +4,8 @@
 
 <template>
   <div class="chat_recipient">
-    <h6 class="mb-1">{{ message.author }}</h6>
-    <label>{{ message.message }}</label>
+    <h6 class="mb-1">{{ message.username }}</h6>
+    <label>{{ message.text }}</label>
     <br>
     <small>{{ message.time }}</small>
   </div>

@@ -3,9 +3,9 @@
 </script>
 
 <template>
-  <div class="chat_sender" v-if="props">
-    <h6 class="mb-1">{{ message.author }}</h6>
-    <label>{{ message.message }}</label>
+  <div class="chat_sender">
+    <h6 class="mb-1">{{ message.username }}</h6>
+    <label>{{ message.text }}</label>
     <br>
     <small>{{ message.time }}</small>
   </div>
