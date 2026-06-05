@@ -17,16 +17,17 @@
         })
   }
 
-  const messageToSend = ref({
-    chat_id: null,
-    text: null
-  })
+  const messageToSend = ref(null);
+  const currentChatId = ref(null);
 
   async function sendMessage(){
-      axios.post('/api/message/send', messageToSend.value)
+      axios.post('/api/message/send', {
+        chat_id: currentChatId.value,
+        text: messageToSend.value
+      })
           .then(response =>{
-            messageToSend.value.text = null;
-            getChatContent(messageToSend.value.chat_id);
+            messageToSend.value = null;
+            getChatContent();
           })
           .catch(error =>{
             console.log(error);
@@ -36,9 +37,8 @@
   const chatContent = ref([]);
   const chatComponents = shallowRef([]);
 
-  async function getChatContent(chat_id){
-    messageToSend.value.chat_id = chat_id;
-    axios.get(`/chats/${chat_id}`)
+  async function getChatContent(){
+    axios.get(`/chats/${currentChatId.value}`)
         .then(response =>{
           chatComponents.value = [];
           chatContent.value = response.data;
@@ -62,6 +62,11 @@
         })
   }
 
+  function focusOnChat(chat_id){
+    currentChatId.value = chat_id;
+    getChatContent();
+  }
+
   onMounted(()=>{
     getChats();
   })
@@ -73,7 +78,7 @@
     <div class="container">
       <div class="list-group">
         <a href="#" class="friend list-group-item list-group-item-action"
-           v-for="chat in chats" @click="getChatContent(chat.chat_id)">
+           v-for="chat in chats" @click="focusOnChat(chat.chat_id)">
           <img class="friend-avatar" :src="chat.avatarUrl" alt="avatar">
             <h6 class="friend-name">{{chat.name}}</h6>
             <small class="friend-time">3 days ago</small>
@@ -87,7 +92,7 @@
       <div class="form-floating">
         <textarea class="form-control" placeholder="Leave a comment here"
                   id="floatingTextarea2" style="height: 100px"
-                  v-model="messageToSend.text" @keydown.enter="sendMessage"></textarea>
+                  v-model="messageToSend" @keydown.enter="sendMessage"></textarea>
         <label for="floatingTextarea2">Comment</label>
       </div>
       <add-chat></add-chat>
