@@ -1,4 +1,11 @@
 <script setup>
+import axios from "axios";
+
+async function loadToken() {
+  await axios.get("/api/public/token");
+}
+loadToken();
+
 </script>
 
 <template>

@@ -28,6 +28,7 @@
     formData.append('file', image.value);
     axios.post("/api/public/uploadAvatar", formData)
         .then(response =>{
+          user.value.avatarUrl = response.data;
           axios.post('/api/public/registration', user.value)
           .then(response =>{
             useAuthStore().isAuthenticated = true;

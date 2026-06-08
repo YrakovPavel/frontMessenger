@@ -1,7 +1,7 @@
 <script setup>
   import AddChat from "@/components/main/AddChat.vue";
   import axios from "axios";
-  import {onMounted, reactive, ref, shallowRef} from "vue";
+  import {onMounted, ref, shallowRef} from "vue";
   import ChatSender from "@/components/main/ChatSender.vue";
   import ChatRecipient from "@/components/main/ChatRecipient.vue";
   import {useAuthStore} from "@/stores/useAuthStore.js";
@@ -83,7 +83,7 @@
             <h6 class="friend-name">{{chat.name}}</h6>
             <small class="friend-time">3 days ago</small>
             <p class="friend-message">{{chat.text}}</p>
-            <span class="friend-badge badge text-bg-primary rounded-pill">2</span>
+         <!--   <span class="friend-badge badge text-bg-primary rounded-pill">2</span> !-->
         </a>
       </div>
       <div class="chat">
@@ -142,6 +142,10 @@
     grid-template-areas:
         "a b b d e e"
         "a c c c c m";
+  }
+
+  h6{
+    text-align: left;
   }
 
   .friend-avatar{
