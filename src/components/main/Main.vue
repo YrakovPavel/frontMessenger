@@ -1,16 +1,97 @@
 <script setup>
-  import AddChat from "@/components/main/AddChat.vue";
-  import axios from "axios";
-  import {onMounted, ref, shallowRef} from "vue";
-  import ChatSender from "@/components/main/ChatSender.vue";
-  import ChatRecipient from "@/components/main/ChatRecipient.vue";
-  import {useAuthStore} from "@/stores/useAuthStore.js";
+import AddChat from "@/components/main/AddChat.vue";
+import axios from "axios";
+import {markRaw, onMounted, ref} from "vue";
+import {Client} from "@stomp/stompjs";
+import ChatSender from "@/components/main/ChatSender.vue";
+import ChatRecipient from "@/components/main/ChatRecipient.vue";
+import {useAuthStore} from "@/stores/useAuthStore.js";
+
+  //Добавление подписок в веб сокет
+  function assignChatsSubscriptions(){
+    for (let chat of chats.value) {
+      subscriptions.chats.push(stompClient.subscribe('/topic/chat/' + chat["chat_id"],
+          (message) => {
+            let parsedMessage = JSON.parse(message.body);
+            if (parsedMessage["chat_id"] === currentChatId.value){
+              chatContent.value.push(parsedMessage);
+              createMessage(parsedMessage);
+            }
+            chat["text"] = parsedMessage["text"];
+          }));
+    }
+  }
+
+  //Настройка веб сокета
+  const subscriptions = {
+    chats: [],
+    users: null
+  }
+  const stompClient = new Client({
+    brokerURL: 'ws://localhost:8080/my-messenger-websocket',
+    debug(str){
+      console.log(str);
+    },
+    reconnectDelay: 5000, // Auto-reconnect after 5 seconds if dropped
+    heartbeatIncoming: 4000,
+    heartbeatOutgoing: 4000,
+  });
+
+  stompClient.onConnect = (frame) =>{
+    console.log("Connected", frame);
+    assignChatsSubscriptions();
+  };
+
+  stompClient.onStompError = (frame) => {
+    console.error('Broker reported error: ' + frame.headers['message']);
+    console.error('Additional details: ' + frame.body);
+  };
+
+  stompClient.activate();
+
+  //Контентное наполнение страницы(Чаты, сообщения)
+  const chatContent = ref([]);
+  const chatComponents = ref([]);
+
+  //Создать компонент(Сообщение)
+  function createMessage(message){
+    if (message["username"] === useAuthStore().username){
+      chatComponents.value.push({
+        type: markRaw(ChatRecipient),
+        props: {message}
+      })
+    }
+    else{
+      chatComponents.value.push({
+        type: markRaw(ChatSender),
+        props: {message}
+      })
+    }
+  }
+
+  //Получить содержание чата(список сообщений в диалоге)
+  async function getChatContent(){
+    axios.get(`/chats/${currentChatId.value}`)
+        .then(response =>{
+          chatComponents.value = [];
+          chatContent.value = response.data;
+          chatContent.value.forEach((message) =>{
+            createMessage(message);
+          })
+        })
+        .catch(error =>{
+          console.log(error);
+        })
+  }
 
   const chats = ref([]);
+
+  //Получить превью слева(Название чата, изображение, последнее сообщение)
   async function getChats(){
     axios.get('/chats/preview')
         .then(response =>{
           chats.value = response.data;
+          assignChatsSubscriptions();
         })
         .catch(error =>{
           console.log(error);
@@ -27,41 +108,13 @@
       })
           .then(response =>{
             messageToSend.value = null;
-            getChatContent();
           })
           .catch(error =>{
             console.log(error);
           })
   }
 
-  const chatContent = ref([]);
-  const chatComponents = shallowRef([]);
-
-  async function getChatContent(){
-    axios.get(`/chats/${currentChatId.value}`)
-        .then(response =>{
-          chatComponents.value = [];
-          chatContent.value = response.data;
-          chatContent.value.forEach((message) =>{
-            if (message["username"] === useAuthStore().username){
-              chatComponents.value.push({
-                type: ChatRecipient,
-                props: {message}
-              })
-            }
-            else{
-              chatComponents.value.push({
-                type: ChatSender,
-                props: {message}
-              })
-            }
-          })
-        })
-        .catch(error =>{
-          console.log(error);
-        })
-  }
-
+  //Выбрать чат приоритетным и открыть его сообщения
   function focusOnChat(chat_id){
     currentChatId.value = chat_id;
     getChatContent();
