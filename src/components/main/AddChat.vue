@@ -47,7 +47,7 @@
         <div class="modal-body">
           <input id="login" type="text" class="form-control" placeholder="Логин пользователя" v-model="login">
         </div>
-        <button type="button" class="add btn btn-primary" @click="AddChat">Добавить</button>
+        <button type="button" class="btn btn-primary" @click="AddChat">Добавить</button>
       </div>
     </div>
   </div>
@@ -58,10 +58,5 @@
     place-self: center;
     width: 100%;
     height: 50%;
-  }
-  .add{
-    place-self: center;
-    margin: 10px;
-    width: 50%;
   }
 </style>
