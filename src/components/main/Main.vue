@@ -1,7 +1,7 @@
 <script setup>
 import AddChat from "@/components/main/AddChat.vue";
 import axios from "axios";
-import {markRaw, onMounted, ref} from "vue";
+import {markRaw, onBeforeUnmount, onMounted, ref} from "vue";
 import {Client} from "@stomp/stompjs";
 import ChatSender from "@/components/main/ChatSender.vue";
 import ChatRecipient from "@/components/main/ChatRecipient.vue";
@@ -89,7 +89,7 @@ import AccountDropdown from "@/components/main/AccountDropdown.vue";
   const chats = ref([]);
 
   //Получить превью слева(Название чата, изображение, последнее сообщение)
-  async function getChats(){
+  async function getChatsPreview(){
     axios.get('/chats/preview')
         .then(response =>{
           chats.value = response.data;
@@ -99,6 +99,8 @@ import AccountDropdown from "@/components/main/AccountDropdown.vue";
           console.log(error);
         })
   }
+
+  const findChatValue = ref("");
 
   const messageToSend = ref(null);
   const currentChatId = ref(null);
@@ -123,8 +125,12 @@ import AccountDropdown from "@/components/main/AccountDropdown.vue";
   }
 
   onMounted(()=>{
-    getChats();
+    getChatsPreview();
   })
+
+  onBeforeUnmount(() => {
+    stompClient.deactivate();
+  });
 
 </script>
 
@@ -132,13 +138,13 @@ import AccountDropdown from "@/components/main/AccountDropdown.vue";
   <div class="page">
     <div class="container">
       <nav class="navbar bg-primary">
-          <input class="find-field form-control" type="search" placeholder="Поиск" aria-label="Search">
-          <button class="find-but btn btn-outline-light" type="submit">Найти</button>
+          <input class="find-field form-control" type="search" placeholder="Поиск"
+                 aria-label="Search" v-model="findChatValue">
           <account-dropdown></account-dropdown>
       </nav>
       <div class="main">
         <div class="list-group">
-          <chat-preview v-for="chat in chats" :chat="chat" @click="focusOnChat(chat.chat_id)"/>
+          <chat-preview v-for="chat in chats" :chat="chat" :find="findChatValue" @click="focusOnChat(chat.chat_id)"/>
         </div>
         <div class="chat">
           <component v-for="item in chatComponents" :is="item.type" v-bind="item.props"/>
@@ -147,7 +153,7 @@ import AccountDropdown from "@/components/main/AccountDropdown.vue";
           <textarea class="form-control" placeholder="Leave a comment here"
                     id="floatingTextarea2" style="height: 100px"
                     v-model="messageToSend" @keydown.enter="sendMessage"></textarea>
-            <label for="floatingTextarea2">Comment</label>
+            <label for="floatingTextarea2">Комментарий...</label>
         </div>
         <add-chat></add-chat>
       </div>
@@ -192,11 +198,7 @@ import AccountDropdown from "@/components/main/AccountDropdown.vue";
   }
 
   .find-field{
-    width: 30%;
-  }
-
-  .find-but{
-    width: 8%;
+    width: 39%;
   }
 
   .list-group{

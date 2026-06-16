@@ -1,9 +1,9 @@
 <script setup>
-  const props = defineProps(["chat"]);
+  defineProps(["chat", "find"]);
 </script>
 
 <template>
-  <a href="#" class="friend list-group-item list-group-item-action">
+  <a href="#" class="friend list-group-item list-group-item-action" v-if="chat.name.includes(find)">
     <img class="friend-avatar" :src="chat.avatarUrl" alt="avatar">
     <h6 class="friend-name">{{chat.name}}</h6>
     <small class="friend-time">3 days ago</small>

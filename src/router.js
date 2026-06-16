@@ -29,11 +29,25 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from) => {
+    if (useAuthStore().isAuthenticated){
+        if (to.name === "login" || to.name === "registration"){
+            return {name: "main"};
+        }
+        else{
+            return true;
+        }
+    }
+    else{
+        if (to.meta.requiresAuth){
+            return {name: "login"};
+        }
+    }
+        /*
     if (to.meta.requiresAuth && !useAuthStore().isAuthenticated) {
         return {name: "login"};
     } else {
         return true;
-    }
+    } */
 })
 
 export default router;
