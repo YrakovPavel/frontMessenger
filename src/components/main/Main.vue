@@ -2,54 +2,48 @@
 import AddChat from "@/components/main/AddChat.vue";
 import axios from "axios";
 import {markRaw, onBeforeUnmount, onMounted, ref} from "vue";
-import {Client} from "@stomp/stompjs";
 import ChatSender from "@/components/main/ChatSender.vue";
 import ChatRecipient from "@/components/main/ChatRecipient.vue";
 import {useAuthStore} from "@/stores/useAuthStore.js";
 import ChatPreview from "@/components/main/ChatPreview.vue";
 import AccountDropdown from "@/components/main/AccountDropdown.vue";
+import webSocketClient from "@/webSocketClient.js";
 
-  //Добавление подписок в веб сокет
+  const socketConnection = new webSocketClient('http://localhost:8080/my-messenger-websocket');
+
+  //Добавления подписки на чат
+  function chatSubscription(chat){
+    socketConnection.subscribe('chats', '/topic/chat/' + chat["chat_id"],
+        (message) => {
+          let parsedMessage = JSON.parse(message.body);
+          if (parsedMessage["chat_id"] === currentChatId.value){
+            chatContent.value.push(parsedMessage);
+            createMessage(parsedMessage);
+          }
+          chat["text"] = parsedMessage["text"];
+        })
+  }
+
+  //Добавление подписки на новых пользователей
+  function userSubscription(){
+    socketConnection.subscribe('users', '/user/queue/chats',
+        (message) =>{
+          let parsedMessage = JSON.parse(message.body);
+          console.log(parsedMessage);
+          chats.value.push(parsedMessage);
+          chatSubscription(parsedMessage);
+    });
+  }
+
+  //Добавление подписок на все чаты
   function assignChatsSubscriptions(){
     for (let chat of chats.value) {
-      subscriptions.chats.push(stompClient.subscribe('/topic/chat/' + chat["chat_id"],
-          (message) => {
-            let parsedMessage = JSON.parse(message.body);
-            if (parsedMessage["chat_id"] === currentChatId.value){
-              chatContent.value.push(parsedMessage);
-              createMessage(parsedMessage);
-            }
-            chat["text"] = parsedMessage["text"];
-          }));
+      chatSubscription(chat);
     }
   }
 
-  //Настройка веб сокета
-  const subscriptions = {
-    chats: [],
-    users: null
-  }
-  const stompClient = new Client({
-    brokerURL: 'ws://localhost:8080/my-messenger-websocket',
-    debug(str){
-      console.log(str);
-    },
-    reconnectDelay: 5000, // Auto-reconnect after 5 seconds if dropped
-    heartbeatIncoming: 4000,
-    heartbeatOutgoing: 4000,
-  });
-
-  stompClient.onConnect = (frame) =>{
-    console.log("Connected", frame);
-    assignChatsSubscriptions();
-  };
-
-  stompClient.onStompError = (frame) => {
-    console.error('Broker reported error: ' + frame.headers['message']);
-    console.error('Additional details: ' + frame.body);
-  };
-
-  stompClient.activate();
+  socketConnection.pushOnConnectedCallback(assignChatsSubscriptions);
+  socketConnection.pushOnConnectedCallback(userSubscription);
 
   //Контентное наполнение страницы(Чаты, сообщения)
   const chatContent = ref([]);
@@ -126,10 +120,11 @@ import AccountDropdown from "@/components/main/AccountDropdown.vue";
 
   onMounted(()=>{
     getChatsPreview();
+    userSubscription();
   })
 
   onBeforeUnmount(() => {
-    stompClient.deactivate();
+    socketConnection.disconnect();
   });
 
 </script>
