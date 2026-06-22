@@ -81,12 +81,16 @@ import webSocketClient from "@/webSocketClient.js";
   }
 
   const chats = ref([]);
+  const addChatRef = ref(null);
 
   //Получить превью слева(Название чата, изображение, последнее сообщение)
   async function getChatsPreview(){
     axios.get('/chats/preview')
         .then(response =>{
           chats.value = response.data;
+          if (!chats.value.length){
+            addChatRef.value?.openModal();
+          }
           assignChatsSubscriptions();
         })
         .catch(error =>{
@@ -144,13 +148,13 @@ import webSocketClient from "@/webSocketClient.js";
         <div class="chat">
           <component v-for="item in chatComponents" :is="item.type" v-bind="item.props"/>
         </div>
-        <div class="form-floating">
+        <div class="form-floating" v-if="currentChatId">
           <textarea class="form-control" placeholder="Leave a comment here"
                     id="floatingTextarea2" style="height: 100px"
                     v-model="messageToSend" @keydown.enter="sendMessage"></textarea>
             <label for="floatingTextarea2">Комментарий...</label>
         </div>
-        <add-chat></add-chat>
+        <add-chat ref="addChatRef"></add-chat>
       </div>
     </div>
   </div>
