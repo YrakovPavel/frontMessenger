@@ -1,5 +1,5 @@
 import {createRouter, createWebHistory} from "vue-router";
-import {useAuthStore} from "@/stores/useAuthStore.js";
+import {useAuthStore} from "@/auth/useAuthStore.js";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -30,7 +30,7 @@ const router = createRouter({
 
 router.beforeEach((to, from) => {
     if (useAuthStore().isAuthenticated){
-        if (to.name === "login" || to.name === "registration"){
+        if (to.name === "home" || to.name === "login" || to.name === "registration"){
             return {name: "main"};
         }
         else{

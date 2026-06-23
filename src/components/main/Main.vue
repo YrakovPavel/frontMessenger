@@ -4,7 +4,7 @@ import axios from "axios";
 import {markRaw, onBeforeUnmount, onMounted, ref} from "vue";
 import ChatSender from "@/components/main/ChatSender.vue";
 import ChatRecipient from "@/components/main/ChatRecipient.vue";
-import {useAuthStore} from "@/stores/useAuthStore.js";
+import {useAuthStore} from "@/auth/useAuthStore.js";
 import ChatPreview from "@/components/main/ChatPreview.vue";
 import AccountDropdown from "@/components/main/AccountDropdown.vue";
 import webSocketClient from "@/webSocketClient.js";
@@ -20,7 +20,9 @@ import webSocketClient from "@/webSocketClient.js";
             chatContent.value.push(parsedMessage);
             createMessage(parsedMessage);
           }
-          chat["text"] = parsedMessage["text"];
+          let chatPos = chats.value.findIndex(item => item["chat_id"] === chat["chat_id"]);
+          chats.value[chatPos]["text"] = parsedMessage["text"];
+          chats.value[chatPos]["time"] = parsedMessage["time"];
         })
   }
 
@@ -29,7 +31,6 @@ import webSocketClient from "@/webSocketClient.js";
     socketConnection.subscribe('users', '/user/queue/chats',
         (message) =>{
           let parsedMessage = JSON.parse(message.body);
-          console.log(parsedMessage);
           chats.value.push(parsedMessage);
           chatSubscription(parsedMessage);
     });
@@ -143,7 +144,8 @@ import webSocketClient from "@/webSocketClient.js";
       </nav>
       <div class="main">
         <div class="list-group">
-          <chat-preview v-for="chat in chats" :chat="chat" :find="findChatValue" @click="focusOnChat(chat.chat_id)"/>
+          <chat-preview v-for="chat in chats" :key="chat.chat_id" :chat="chat"
+                        :find="findChatValue" @click="focusOnChat(chat.chat_id)"/>
         </div>
         <div class="chat">
           <component v-for="item in chatComponents" :is="item.type" v-bind="item.props"/>

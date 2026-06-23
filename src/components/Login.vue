@@ -2,8 +2,8 @@
 
 import {ref} from "vue";
 import axios from "axios";
-import {useAuthStore} from "@/stores/useAuthStore.js";
 import {useRouter} from "vue-router";
+import checkAuth from "@/auth/checkAuth.js";
 
 const user = ref({
   username: null,
@@ -19,8 +19,7 @@ async function login(){
 
   axios.post('/api/login', params)
       .then(response =>{
-        useAuthStore().isAuthenticated = true;
-        useAuthStore().username = params.get("username");
+        checkAuth()
         router.push({name: "main"});
       })
       .catch(error =>{

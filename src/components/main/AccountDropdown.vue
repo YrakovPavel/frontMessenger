@@ -1,5 +1,5 @@
 <script setup>
-  import {useAuthStore} from "@/stores/useAuthStore.js";
+  import {useAuthStore} from "@/auth/useAuthStore.js";
   import {onMounted, ref} from "vue";
   import {Modal} from "bootstrap";
   import axios from "axios";

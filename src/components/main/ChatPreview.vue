@@ -1,13 +1,36 @@
 <script setup>
-  defineProps(["chat", "find"]);
+import {computed} from "vue";
+
+  const props = defineProps(["chat", "find"]);
+  const timeNow = new Date();
+
+  const getTime = computed(()=>{
+    let timeDate = new Date(props.chat.time);
+    let timeDifference = (timeNow.getTime() - timeDate.getTime()) / 86400000;//Переводим разницу в дни (1000 * 60 * 60 * 24);
+
+    if (timeDifference > 6){
+      return timeDate.toLocaleDateString('de-DE');
+    }
+
+    if (timeNow.toDateString() !== timeDate.toDateString()){
+      return timeDate.toLocaleString('ru-RU', { weekday: 'short' });
+    }
+
+    return timeDate.toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'})
+  });
+
+  const getText = computed(()=>{
+    return (!props.chat.text) ? "(Напишите свое первое сообщение)" : props.chat.text;
+  })
+
 </script>
 
 <template>
-  <a href="#" class="friend list-group-item list-group-item-action" v-if="chat.name.includes(find)">
-    <img class="friend-avatar" :src="chat.avatarUrl" alt="avatar">
-    <h6 class="friend-name">{{chat.name}}</h6>
-    <small class="friend-time">3 days ago</small>
-    <p class="friend-message">{{chat.text}}</p>
+  <a href="#" class="friend list-group-item list-group-item-action" v-if="props.chat.name.includes(find)">
+    <img class="friend-avatar" :src="props.chat.avatarUrl" alt="avatar">
+    <h6 class="friend-name">{{props.chat.name}}</h6>
+    <small class="friend-time">{{getTime}}</small>
+    <p class="friend-message">{{getText}}</p>
     <!--   <span class="friend-badge badge text-bg-primary rounded-pill">2</span> !-->
   </a>
 </template>
