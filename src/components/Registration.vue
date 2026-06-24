@@ -86,22 +86,27 @@
 
 <style scoped>
   .page{
-    padding-top: 1px;
-    padding-bottom: 1px;
-    min-height:100vh;
-    min-width:100vh;
+    padding-top: 5vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+
+    min-height: 100vh;
   }
 
   .container{
     border-radius: 15px;
-    margin: 5% auto;
+    margin: 40px auto;
     padding: 40px;
+
     display: grid;
     justify-content: center;
     align-items: center;
-    background: white;
     text-align: center;
-    width: 30%;
+
+    background: white;
+    width: min(90vw, 550px);
   }
 
   h1{
@@ -110,27 +115,4 @@
     margin: 0 auto 20px;
   }
 
-  @media (max-width: 768px){
-
-    .container{
-      width: 90%;
-      min-height: auto;
-
-      padding: 25px;
-    }
-
-    h1{
-      font-size: 32px;
-    }
-
-    .form-control,
-    .btn{
-      font-size: 18px;
-      height: 55px;
-    }
-
-    label{
-      font-size: 18px;
-    }
-  }
 </style>

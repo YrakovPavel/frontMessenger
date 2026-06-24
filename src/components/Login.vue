@@ -52,22 +52,27 @@ async function login(){
 
 <style scoped>
   .page{
-    padding-top: 1px;
-    padding-bottom: 1px;
-    min-height:100vh;
-    min-width:100vh;
+    padding-top: 10vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+
+    min-height: 100vh;
   }
 
   .container{
     border-radius: 15px;
-    margin: 5% auto;
+    margin: 40px auto;
     padding: 40px;
+
     display: grid;
     align-items: center;
     justify-content: center;
     text-align: center;
+
     background: white;
-    width: 30%;
+    width: min(90vw, 550px);
   }
 
   .form-floating{
@@ -77,6 +82,7 @@ async function login(){
 
   .btn{
     width: 70%;
+    height: 70%;
     margin: 0 auto 10px;
   }
 
@@ -86,27 +92,4 @@ async function login(){
     margin: 0 auto 50px;
   }
 
-  @media (max-width: 768px){
-
-    .container{
-      width: 90%;
-      min-height: auto;
-
-      padding: 25px;
-    }
-
-    h1{
-      font-size: 32px;
-    }
-
-    .form-control,
-    .btn{
-      font-size: 18px;
-      height: 55px;
-    }
-
-    label{
-      font-size: 18px;
-    }
-  }
 </style>

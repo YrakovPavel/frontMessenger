@@ -9,8 +9,8 @@ loadToken();
 </script>
 
 <template>
-  <div class="page">
-    <div class="container">
+  <div class="page col-12">
+    <div class="card-container">
       <h1>Добро пожаловать в MyMessenger!</h1>
       <img src="@/assets/communicati.jpg" alt="main image of people">
       <div class="buttons">
@@ -23,67 +23,48 @@ loadToken();
 
 <style scoped>
   .page{
-    padding-top: 1px;
-    padding-bottom: 1px;
-    min-height:100vh;
-    min-width:100vh;
+    padding-top: 10vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+
+    min-height: 100vh;
   }
 
-  .container{
+  .card-container{
     border-radius: 15px;
-    margin: 5% auto;
+    margin: 40px auto;
     padding: 40px;
+
     display: grid;
     align-items: center;
     justify-content: center;
     text-align: center;
+
     background: white;
-    width: 30%;
+    width: min(90vw, 550px);
   }
 
   .buttons{
     display: grid;
     grid-template-columns: 1fr 1fr;
+    gap: 20px;
   }
 
   .btn{
-    margin: 0 auto;
-    width: 90%;
+    padding: 12px;
+    font-size: 20px;
   }
 
   h1{
-    text-align: center;
-    width: 100%;
     margin: 0 auto 0;
   }
 
   img{
     width: 100%;
-    height: 100%;
+    height: auto;
     padding: 20px;
   }
 
-  @media (max-width: 768px){
-
-    .container{
-      width: 90%;
-      min-height: auto;
-
-      padding: 25px;
-    }
-
-    h1{
-      font-size: 32px;
-    }
-
-    .form-control,
-    .btn{
-      font-size: 18px;
-      height: 55px;
-    }
-
-    label{
-      font-size: 18px;
-    }
-  }
 </style>

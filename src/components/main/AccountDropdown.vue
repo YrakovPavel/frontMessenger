@@ -4,6 +4,9 @@
   import {Modal} from "bootstrap";
   import axios from "axios";
   import router from "@/router.js";
+  import {useRouter} from "vue-router";
+
+  const router = useRouter();
 
   //Нажатие в меню навигации на свой аккаунт
   const toggleOpen = ref(false);

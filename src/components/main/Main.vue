@@ -136,7 +136,7 @@ import webSocketClient from "@/webSocketClient.js";
 
 <template>
   <div class="page">
-    <div class="container">
+    <div class="card-container">
       <nav class="navbar bg-primary">
           <input class="find-field form-control" type="search" placeholder="Поиск"
                  aria-label="Search" v-model="findChatValue">
@@ -164,12 +164,16 @@ import webSocketClient from "@/webSocketClient.js";
 
 <style scoped>
   .page{
-    height: 100vh;
+    padding-top: 4vh;
+
     display: flex;
-    padding: 2%;
+    justify-content: center;
+    align-items: flex-start;
+
+    min-height: 100vh;
   }
 
-  .container{
+  .card-container{
     padding: 0;
     border-radius: 15px;
     background: white;
