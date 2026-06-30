@@ -8,6 +8,6 @@ import piniaPluginPersistence from 'pinia-plugin-persistedstate'
 import router from "@/router.js";
 
 const pinia = createPinia();
-pinia.use(piniaPluginPersistence)
+pinia.use(piniaPluginPersistence);
 
-createApp(App).use(pinia).use(router).mount('#app')
+createApp(App).use(pinia).use(router).mount('#app');

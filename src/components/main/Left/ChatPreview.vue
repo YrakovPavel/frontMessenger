@@ -64,6 +64,8 @@ import {computed} from "vue";
 
   .friend-time{
     grid-area: e;
+    text-align: end;
+    margin-right: 12px;
   }
 
   .friend-message{

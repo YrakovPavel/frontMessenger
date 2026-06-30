@@ -2,7 +2,6 @@
   import {ref} from "vue";
   import axios from "axios";
   import {useRouter} from "vue-router";
-  import checkAuth from "@/auth/checkAuth.js";
 
   const router = useRouter();
 
@@ -31,7 +30,7 @@
           user.value.avatarUrl = response.data;
           axios.post('/api/public/registration', user.value)
           .then(response =>{
-            router.push({name: "main"});
+            router.push({name: "main-empty"});
           })
           .catch(error =>{
             console.log(error)

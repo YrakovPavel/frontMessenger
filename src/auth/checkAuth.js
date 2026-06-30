@@ -2,14 +2,15 @@ import axios from "axios";
 import {useAuthStore} from "@/auth/useAuthStore.js";
 
 async function checkAuth(){
-    axios.get('/api/public/auth/check')
+    await axios.get('/api/public/auth/check')
         .then(response => {
+            const store = useAuthStore();
             if (Object.keys(response.data).length){
-                useAuthStore().isAuthenticated = true;
-                useAuthStore().username = response.data["login"];
+                store.state.isAuthenticated = true;
+                store.state.username = response.data["login"];
             }
             else{
-                useAuthStore().isAuthenticated = false;
+                store.state.isAuthenticated = false;
             }
         })
         .catch(error =>{

@@ -59,8 +59,12 @@ import {ref, onMounted, watch} from "vue";
 
 <style scoped>
   .newChat{
-    place-self: center;
+    margin-top: 9vh;
     width: 100%;
-    height: 50%;
+    height: 11vh;
+  }
+
+  button{
+    margin: 12px;
   }
 </style>

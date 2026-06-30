@@ -3,10 +3,10 @@
   import {onMounted, ref} from "vue";
   import {Modal} from "bootstrap";
   import axios from "axios";
-  import router from "@/router.js";
   import {useRouter} from "vue-router";
 
   const router = useRouter();
+  const store = useAuthStore();
 
   //Нажатие в меню навигации на свой аккаунт
   const toggleOpen = ref(false);
@@ -18,7 +18,7 @@
   async function logout(){
     axios.post("/api/logout")
         .then(response =>{
-          useAuthStore().$reset();
+          store.$reset();
           router.push({name: "home"});
         })
         .catch(error =>{
@@ -78,7 +78,7 @@
 <template>
   <div class="dropdown">
     <a class="nav-link dropdown-toggle" href="#" role="button" @click="toggleDropdown" :aria-expanded=toggleOpen>
-      {{useAuthStore().username}}
+      {{store.state.username}}
     </a>
     <ul class="dropdown-menu" v-if="toggleOpen">
       <li><a class="dropdown-item" href="#" @click="openModal">Профиль</a></li>

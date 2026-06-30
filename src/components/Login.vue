@@ -18,9 +18,9 @@ async function login(){
   params.append('password', user.value.password);
 
   axios.post('/api/login', params)
-      .then(response =>{
-        checkAuth()
-        router.push({name: "main"});
+      .then(async () =>{
+        await checkAuth()
+        await router.push({name: "main-empty"})
       })
       .catch(error =>{
         console.log(error)

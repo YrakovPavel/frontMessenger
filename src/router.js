@@ -21,17 +21,30 @@ const router = createRouter({
         },
         {
             path: "/main",
-            name: "main",
             component: () => import("./components/main/Main.vue"),
-            meta: {requiresAuth: true}
+            meta: {requiresAuth: true},
+            children:[
+                {
+                    path: "",
+                    name: "main-empty",
+                    component: () => import("./components/main/Right/EmptyChat.vue")
+                },
+                {
+                    path: ":id",
+                    name: "main-chat",
+                    component: () => import("./components/main/Right/Chat.vue"),
+                    props: true
+                }
+            ]
         }
     ]
 })
 
 router.beforeEach((to, from) => {
-    if (useAuthStore().isAuthenticated){
+    const store = useAuthStore();
+    if (store.state.isAuthenticated){
         if (to.name === "home" || to.name === "login" || to.name === "registration"){
-            return {name: "main"};
+            return {name: "main-empty"};
         }
         else{
             return true;
@@ -42,12 +55,6 @@ router.beforeEach((to, from) => {
             return {name: "login"};
         }
     }
-        /*
-    if (to.meta.requiresAuth && !useAuthStore().isAuthenticated) {
-        return {name: "login"};
-    } else {
-        return true;
-    } */
 })
 
 export default router;

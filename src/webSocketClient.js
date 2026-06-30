@@ -23,7 +23,7 @@ class WebSocketClient {
 
         this.client.onConnect = (frame) => {
             console.log('STOMP Connected');
-            this.onConnectedCallbacks.forEach(cb => cb()); // Выполнить всю посторонюю логику(подписки и т.п)
+            this.onConnectedCallbacks.forEach(cb => cb()); // Выполнить всю сторонюю логику(подписки и т.п)
         };
 
         this.client.onStompError = (frame) => {

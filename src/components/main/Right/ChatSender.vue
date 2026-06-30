@@ -29,7 +29,6 @@
     margin-top: 10px;
     margin-bottom: 10px;
     padding: 10px;
-    max-width: 50%;
     word-break: break-all;
   }
 </style>
