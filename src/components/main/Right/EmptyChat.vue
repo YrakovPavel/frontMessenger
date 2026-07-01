@@ -1,6 +1,4 @@
-<script setup>
-
-</script>
+<script setup></script>
 
 <template>
   <div class="empty-chat">
@@ -11,6 +9,4 @@
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

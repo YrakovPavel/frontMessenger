@@ -1,19 +1,22 @@
-import {defineStore} from "pinia";
-import {reactive} from "vue";
+import { defineStore } from "pinia";
+import { reactive } from "vue";
 
-export const useAuthStore = defineStore('auth', ()=>{
+export const useAuthStore = defineStore(
+  "auth",
+  () => {
     const state = reactive({
-        isAuthenticated: false,
-        username: ""
-    })
+      isAuthenticated: false,
+      username: "",
+    });
 
-    function $reset(){
-        state.isAuthenticated = false;
-        state.username = "";
+    function $reset() {
+      state.isAuthenticated = false;
+      state.username = "";
     }
 
-    return {state, $reset}
-    },
-    {
-        persist: true
-    })
+    return { state, $reset };
+  },
+  {
+    persist: true,
+  },
+);

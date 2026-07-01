@@ -1,39 +1,39 @@
 <script setup>
-import {ref, onMounted, watch} from "vue";
-  import {Modal} from 'bootstrap';
-  import axios from "axios";
+import { ref, onMounted } from "vue";
+import { Modal } from "bootstrap";
+import axios from "axios";
 
-  const ModalElement = ref(null);
-  let ModalInstance = null;
+const ModalElement = ref(null);
+let ModalInstance = null;
 
-  const login = ref(null);
+const login = ref(null);
 
-  onMounted(() =>{
-    ModalInstance = new Modal(ModalElement.value);
-  })
+onMounted(() => {
+  ModalInstance = new Modal(ModalElement.value);
+});
 
-  function openModal(){
-    ModalInstance.show();
-  }
+function openModal() {
+  ModalInstance.show();
+}
 
-  function closeModal(){
-    ModalInstance.hide();
-  }
+function closeModal() {
+  ModalInstance.hide();
+}
 
-  function AddChat(){
-    axios.post("/api/chat/create/dialogue", {login: login.value})
-        .then(response =>{
-          ModalInstance.hide();
-        })
-        .catch(error =>{
-          console.log(error)
-        })
-  }
+function AddChat() {
+  axios
+    .post("/api/chat/create/dialogue", { login: login.value })
+    .then(() => {
+      ModalInstance.hide();
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
 
-  defineExpose({
-    openModal
-  });
-
+defineExpose({
+  openModal,
+});
 </script>
 
 <template>
@@ -46,25 +46,38 @@ import {ref, onMounted, watch} from "vue";
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5">Начать диалог</h1>
-          <button type="button" class="btn-close" @click="closeModal" aria-label="Close"></button>
+          <button
+            type="button"
+            class="btn-close"
+            @click="closeModal"
+            aria-label="Close"
+          ></button>
         </div>
         <div class="modal-body">
-          <input id="login" type="text" class="form-control" placeholder="Логин пользователя" v-model="login">
+          <input
+            id="login"
+            type="text"
+            class="form-control"
+            placeholder="Логин пользователя"
+            v-model="login"
+          />
         </div>
-        <button type="button" class="btn btn-primary" @click="AddChat">Добавить</button>
+        <button type="button" class="btn btn-primary" @click="AddChat">
+          Добавить
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-  .newChat{
-    margin-top: 9vh;
-    width: 100%;
-    height: 11vh;
-  }
+.newChat {
+  margin-top: 9vh;
+  width: 100%;
+  height: 11vh;
+}
 
-  button{
-    margin: 12px;
-  }
+button {
+  margin: 12px;
+}
 </style>
